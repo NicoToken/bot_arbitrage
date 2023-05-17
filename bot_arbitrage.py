@@ -144,7 +144,7 @@ def run_arbitrage(symbol, threshold, quantity, target_profit):
 
                     # Menutup order beli di pasar spot
 
-                    close_buy_order = exchange.create_market_sell_order(symbol=symbol=symbol, quantity=quantity)
+                    close_buy_order = exchange.create_market_sell_order(symbol=symbol, quantity=quantity)
 
                     print("Order penjualan di pasar spot:", close_buy_order)
 
