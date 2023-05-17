@@ -14,17 +14,17 @@ exchange = ccxt.binance({
 
 def get_future_price(symbol):
 
-    future_ticker = exchange.fapiPublic_get_ticker_bookticker({'symbol': symbol})
+    future_ticker = exchange.fetch_ticker(symbol)
 
-    return float(future_ticker['bidPrice'])
+    return float(future_ticker['bid'])
 
 # Fungsi untuk mendapatkan harga aset di pasar spot
 
 def get_spot_price(symbol):
 
-    spot_ticker = exchange.public_get_ticker_bookticker({'symbol': symbol})
+    spot_ticker = exchange.fetch_ticker(symbol)
 
-    return float(spot_ticker['bidPrice'])
+    return float(spot_ticker['bid'])
 
 # Fungsi utama untuk menjalankan strategi arbitrase
 
@@ -58,19 +58,7 @@ def run_arbitrage(symbol, threshold, quantity):
 
         # Menjual aset di pasar future
 
-        sell_order = exchange.fapiPrivate_post_order({
-
-            'symbol': symbol,
-
-            'side': 'sell',
-
-            'type': 'market',
-
-            'quantity': quantity,
-
-            'recvWindow': exchange.options['recvWindow'],
-
-        })
+        sell_order = exchange.create_market_sell_order(symbol=symbol, quantity=quantity)
 
         print("Order penjualan di pasar future:", sell_order)
 
