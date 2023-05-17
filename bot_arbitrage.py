@@ -3,7 +3,10 @@ import ccxt
 import time
 
 import statistics
+# Inisialisasi exchange Binance
 
+exchange = ccxt.binance()
+# Fungsi untuk mendapatkan harga aset di pasar future
 def calculate_threshold(price_history):
 
     mean_price = statistics.mean(price_history)
