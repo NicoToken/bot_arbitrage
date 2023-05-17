@@ -2,11 +2,15 @@ import ccxt
 
 import time
 
-import statistics
-
 # Inisialisasi exchange Binance
 
-exchange = ccxt.binance()
+exchange = ccxt.binance({
+
+    'apiKey': 'API_KEY_ANDA',
+
+    'secret': 'SECRET_KEY_ANDA'
+
+})
 
 # Fungsi untuk mendapatkan harga aset di pasar future
 
@@ -30,21 +34,9 @@ def calculate_profit_loss(initial_value, final_value):
 
     return ((final_value - initial_value) / initial_value) * 100
 
-# Fungsi untuk menghitung treshold berdasarkan riwayat harga
-
-def calculate_threshold(price_history):
-
-    mean_price = statistics.mean(price_history)
-
-    std_dev = statistics.stdev(price_history)
-
-    return (std_dev / mean_price) * 100
-
 # Fungsi utama untuk menjalankan strategi arbitrase
 
 def run_arbitrage(symbol, threshold, quantity, target_profit):
-
-    price_history = []
 
     while True:
 
@@ -74,16 +66,6 @@ def run_arbitrage(symbol, threshold, quantity, target_profit):
 
         
 
-        price_history.append(spot_price)
-
-        if len(price_history) > 5:
-
-            price_history.pop(0)
-
-            threshold = calculate_threshold(price_history)
-
-        
-
         if price_diff > threshold:
 
             # Logika pembelian dan penjualan
@@ -96,7 +78,7 @@ def run_arbitrage(symbol, threshold, quantity, target_profit):
 
             # Membeli aset di pasar spot
 
-            buy_order = exchange.create_order(symbol=symbol, type="market", side="buy", quantity=quantity)
+            buy_order = exchange.create_market_buy_order(symbol=symbol, amount=quantity)
 
             print("Order pembelian di pasar spot:", buy_order)
 
@@ -108,7 +90,7 @@ def run_arbitrage(symbol, threshold, quantity, target_profit):
 
             # Menjual aset di pasar future
 
-            sell_order = exchange.create_order(symbol=symbol, type="market", side="sell", quantity=quantity)
+            sell_order = exchange.create_market_sell_order(symbol=symbol, amount=quantity)
 
             print("Order penjualan di pasar future:", sell_order)
 
@@ -140,7 +122,7 @@ def run_arbitrage(symbol, threshold, quantity, target_profit):
 
                 # Menutup order beli di pasar spot
 
-                close_buy_order = exchange.create_order(symbol=symbol, type="market", side="sell", quantity=quantity)
+                close_buy_order = exchange.create_market_sell_order(symbol=symbol, amount=quantity)
 
                 print("Order penjualan di pasar spot:", close_buy_order)
 
@@ -148,7 +130,7 @@ def run_arbitrage(symbol, threshold, quantity, target_profit):
 
                 # Menutup order jual di pasar future
 
-                close_sell_order = exchange.create_order(symbol=symbol, type="market", side="buy", quantity=                quantity)
+                close_sell_order = exchange.create_market_buy_order(symbol=symbol, amount=quantity)
 
                 print("Order pembelian di pasar future:", close_sell_order)
 
@@ -160,18 +142,7 @@ def run_arbitrage(symbol, threshold, quantity, target_profit):
 
         time.sleep(5)  # Tunggu 5 detik sebelum melakukan pengecekan lagi
 
-# Meminta input dari pengguna untuk API Key dan Secret Key
-
-api_key = input("Masukkan API Key Anda: ")
-
-api_secret = input("Masukkan Secret Key Anda: ")
-
-# Mengatur API Key dan Secret Key pada exchange Binance
-
-exchange.apiKey = api_key
-
-exchange.secret = api_secret
-
+# Meminta input dari pengguna untuk simbol, treshold
 # Meminta input dari pengguna untuk simbol, treshold, kuantitas, dan target keuntungan
 
 symbol = input("Masukkan simbol aset (contoh: BTC/USDT): ")
