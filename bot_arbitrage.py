@@ -42,6 +42,20 @@ def run_arbitrage(symbol, threshold, quantity):
 
         
 
+        print("===================================")
+
+        print("Waktu:", time.ctime())
+
+        print("Harga future:", future_price)
+
+        print("Harga spot:", spot_price)
+
+        print("Selisih harga:", price_diff)
+
+        print("===================================")
+
+        
+
         if price_diff > threshold:
 
             # Logika pembelian dan penjualan
