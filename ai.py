@@ -54,6 +54,32 @@ def find_triangular_arbitrage_opportunities():
 
     return opportunities
 
+# Fungsi untuk menampilkan hasil screening di terminal
+
+def print_arbitrage_opportunities(opportunities):
+
+    print("========== Hasil Screening ==========")
+
+    if opportunities:
+
+        for opportunity in opportunities:
+
+            print("Peluang Arbitrase:")
+
+            print(f"Pair 1: {opportunity['pair1']}")
+
+            print(f"Pair 2: {opportunity['pair2']}")
+
+            print(f"Pair 3: {opportunity['pair3']}")
+
+            print(f"Profit Percentage: {opportunity['profit_percentage']}%")
+
+            print("==============================")
+
+    else:
+
+        print("Tidak ditemukan peluang arbitrase.")
+
 # Fungsi untuk mengeksekusi order arbitrase triangular
 
 def execute_triangular_arbitrage(opportunity, initial_funds):
@@ -73,6 +99,10 @@ def run_triangular_arbitrage(target_profit, initial_funds, stop_profit_percentag
         # Melakukan screening peluang arbitrase triangular
 
         opportunities = find_triangular_arbitrage_opportunities()
+
+        # Menampilkan hasil screening di terminal
+
+        print_arbitrage_opportunities(opportunities)
 
         # Jika ditemukan peluang arbitrase
 
@@ -106,7 +136,7 @@ target_profit = float(input("Masukkan target keuntungan (%): "))
 
 initial_funds = float(input("Masukkan jumlah dana awal: "))
 
-stop_profit_percentage = float(input("Masukkan persentase profit untuk berhenti: "))
+stop_profit_percentage = float(input("Masukkan persentase keuntungan untuk berhenti: "))
 
 # Menjalankan strategi arbitrase triangular
 
