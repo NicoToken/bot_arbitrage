@@ -2,6 +2,8 @@ import ccxt
 
 import time
 
+import statistics
+
 # Inisialisasi exchange Binance
 
 exchange = ccxt.binance()
@@ -28,9 +30,25 @@ def calculate_profit_loss(initial_value, final_value):
 
     return ((final_value - initial_value) / initial_value) * 100
 
+# Fungsi untuk menghitung threshold yang cocok
+
+def calculate_threshold(price_history):
+
+    mean_price = statistics.mean(price_history)
+
+    std_dev = statistics.stdev(price_history)
+
+    threshold = (std_dev / mean_price) * 100
+
+    return threshold
+
 # Fungsi utama untuk menjalankan strategi arbitrase
 
-def run_arbitrage(symbol, threshold, quantity, target_profit):
+def run_arbitrage(symbol, quantity, target_profit):
+
+    # Variabel untuk menyimpan histori harga
+
+    price_history = []
 
     while True:
 
@@ -40,65 +58,21 @@ def run_arbitrage(symbol, threshold, quantity, target_profit):
 
         price_diff = future_price - spot_price
 
-        
+        # Menambahkan harga ke histori
 
-        print("===================================")
+        price_history.append(price_diff)
 
-        print("Waktu:", time.ctime())
+        # Menghitung threshold yang cocok
 
-        print("Harga future:", future_price)
+        if len(price_history) > 10:
 
-        print("Harga spot:", spot_price)
-
-        print("Selisih harga:", price_diff)
-
-        print("Treshold:", threshold)
-
-        print("Kuantitas yang akan dieksekusi:", quantity)
-
-        print("===================================")
-
-        
-
-        if price_diff > threshold:
-
-            # Logika pembelian dan penjualan
-
-            # Implementasikan strategi Anda di sini
-
-            # Misalnya, melakukan pembelian di pasar spot dan menjual di pasar future
+            threshold = calculate_threshold(price_history)
 
             
 
-            # Membeli aset di pasar spot
+            print("===================================")
 
-            buy_order = exchange.create_market_buy_order(symbol=symbol, quantity=quantity)
-
-            print("Order pembelian di pasar spot:", buy_order)
-
-            
-
-            buy_price = float(buy_order['fills'][0]['price'])
-
-            
-
-            # Menjual aset di pasar future
-
-            sell_order = exchange.create_market_sell_order(symbol=symbol, quantity=quantity)
-
-            print("Order penjualan di pasar future:", sell_order)
-
-            
-
-            sell_price = float(sell_order['fills'][0]['price'])
-
-            
-
-            profit_loss_percentage = calculate_profit_loss(buy_price, sell_price)
-
-            
-
-            print("Peluang arbitrase terdeteksi!")
+            print("Waktu:", time.ctime())
 
             print("Harga future:", future_price)
 
@@ -106,31 +80,85 @@ def run_arbitrage(symbol, threshold, quantity, target_profit):
 
             print("Selisih harga:", price_diff)
 
-            print("Keuntungan/Kerugian (%):", profit_loss_percentage)
+            print("Treshold (%):", threshold)
+
+            print("Kuantitas yang akan dieksekusi:", quantity)
+
+            print("===================================")
 
             
 
-            if profit_loss_percentage >= target_profit:
+            if price_diff > (spot_price * (threshold / 100)):
 
-                print("Target keuntungan tercapai! Menutup order.")
+                # Logika pembelian dan penjualan
 
-                # Menutup order beli di pasar spot
+                # Implementasikan strategi Anda di sini
 
-                close_buy_order = exchange.create_market_sell_order(symbol=symbol, quantity=quantity)
-
-                print("Order penjualan di pasar spot:", close_buy_order)
+                # Misalnya, melakukan pembelian di pasar spot dan menjual di pasar future
 
                 
 
-                # Menutup order jual di pasar future
+                # Membeli aset di pasar spot
 
-                close_sell_order = exchange.create_market_buy_order(symbol=symbol, quantity=quantity)
+                buy_order = exchange.create_market_buy_order(symbol=symbol, quantity=quantity)
 
-                print("Order pembelian di pasar future:", close_sell_order)
+                print("Order pembelian di pasar spot:", buy_order)
 
                 
 
-                break
+                buy_price = float(buy_order['fills'][0]['price'])
+
+                
+
+                # Menjual aset di pasar future
+
+                sell_order = exchange.create_market_sell_order(symbol=symbol, quantity=quantity)
+
+                print("Order penjualan di pasar future:", sell_order)
+
+                
+
+                sell_price = float(sell_order['fills'][0]['price'])
+
+                
+
+                profit_loss_percentage = calculate_profit_loss(buy_price, sell_price)
+
+                
+
+                print("Peluang arbitrase terdeteksi!")
+
+                print("Harga future:", future_price)
+
+                print("Harga spot:", spot_price)
+
+                print("Selisih harga:", price_diff)
+
+                print("Keuntungan/Kerugian (%):", profit_loss_percentage)
+
+                
+
+                if profit_loss_percentage >= target_profit:
+
+                    print("Target keuntungan tercapai! Menutup order.")
+
+                                        # Menutup order beli di pasar spot
+
+                    close_buy_order = exchange.create_market_sell_order(symbol=symbol, quantity=quantity)
+
+                    print("Order penjualan di pasar spot:", close_buy_order)
+
+                    
+
+                    # Menutup order jual di pasar future
+
+                    close_sell_order = exchange.create_market_buy_order(symbol=symbol, quantity=quantity)
+
+                    print("Order pembelian di pasar future:", close_sell_order)
+
+                    
+
+                    break
 
         
 
@@ -148,11 +176,9 @@ exchange.apiKey = api_key
 
 exchange.secret = api_secret
 
-# Meminta input dari pengguna untuk simbol, treshold, kuantitas, dan target keuntungan
+# Meminta input dari pengguna untuk simbol, kuantitas, dan target keuntungan
 
 symbol = input("Masukkan simbol aset (contoh: BTC/USDT): ")
-
-threshold = float(input("Masukkan treshold (contoh: 10): "))
 
 quantity = float(input("Masukkan kuantitas yang akan dieksekusi (contoh: 0.001): "))
 
@@ -160,5 +186,4 @@ target_profit = float(input("Masukkan target keuntungan dalam persen (contoh: 5)
 
 # Menjalankan strategi arbitrase
 
-run_arbitrage(symbol, threshold, quantity, target_profit)
-
+run_arbitrage(symbol, quantity, target_profit)
