@@ -4,9 +4,9 @@ import ccxt
 
 exchange = ccxt.binance({
 
-    'apiKey': 'hbX0DUDCzJRpICSUsAyagghbG7oII3XETOHvC1c1zs1Pr5SfzVA46xDzIA0iI2Hs',
+    'apiKey': 'YOUR_API_KEY',
 
-    'secret': 'p6kM0rlWoRK2QISVEWgowx0ReCYn2JZzbzoMqDLKSyqLJAKo7D8e8miG0nIFtFXJ'
+    'secret': 'YOUR_API_SECRET'
 
 })
 
@@ -28,7 +28,7 @@ def get_spot_price(symbol):
 
 # Fungsi utama untuk menjalankan strategi arbitrase
 
-def run_arbitrage(symbol, threshold):
+def run_arbitrage(symbol, threshold, quantity):
 
     future_price = get_future_price(symbol)
 
@@ -48,6 +48,34 @@ def run_arbitrage(symbol, threshold):
 
         
 
+        # Membeli aset di pasar spot
+
+        buy_order = exchange.create_market_buy_order(symbol=symbol, quantity=quantity)
+
+        print("Order pembelian di pasar spot:", buy_order)
+
+        
+
+        # Menjual aset di pasar future
+
+        sell_order = exchange.fapiPrivate_post_order({
+
+            'symbol': symbol,
+
+            'side': 'sell',
+
+            'type': 'market',
+
+            'quantity': quantity,
+
+            'recvWindow': exchange.options['recvWindow'],
+
+        })
+
+        print("Order penjualan di pasar future:", sell_order)
+
+        
+
         print("Peluang arbitrase terdeteksi!")
 
         print("Harga future:", future_price)
@@ -60,11 +88,13 @@ def run_arbitrage(symbol, threshold):
 
         print("Tidak ada peluang arbitrase saat ini.")
 
-# Menjalankan bot dengan simbol dan threshold tertentu
+# Menjalankan bot dengan simbol, threshold, dan quantity tertentu
 
 symbol = 'BTC/USDT'  # Ganti dengan pasangan aset yang diinginkan
 
 threshold = 10  # Ganti dengan threshold perbedaan harga yang diinginkan
 
-run_arbitrage(symbol, threshold)
+quantity = 0.001  # Ganti dengan jumlah aset yang diinginkan
+
+run_arbitrage(symbol, threshold, quantity)
 
