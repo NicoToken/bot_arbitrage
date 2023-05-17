@@ -1,118 +1,165 @@
-import requests
+from terra_sdk.client.lcd import LCDClient
 
-import time
+from terra_sdk.key.mnemonic import MnemonicKey
 
-# Fungsi untuk mendapatkan harga aset di DEX Terra menggunakan API Coingecko
+from terra_sdk.core import Coins, MsgExecuteContract
 
-def get_asset_price(asset):
+from itertools import permutations
 
-    url = f"https://api.coingecko.com/api/v3/simple/price?ids={asset}&vs_currencies=usd"
+# Inisialisasi LCDClient
 
-    response = requests.get(url)
+terra_lcd = LCDClient(chain_id="columbus-4", url="https://lcd.terra.dev")
 
-    data = response.json()
+# Meminta input dari pengguna untuk kata kunci mnemonic
 
-    price = data[asset]["usd"]
+mnemonic = input("Masukkan kata kunci mnemonic: ")
 
-    return price
+key = MnemonicKey(mnemonic=mnemonic)
 
-# Fungsi untuk menjalankan strategi arbitrase triangular
+# Menginisialisasi klien menggunakan kunci
 
-def run_triangular_arbitrage(base_asset, quote_asset, target_profit, initial_funds, stop_profit_percentage):
+terra_client = terra_lcd.wallet(key)
 
-    while True:
+# Fungsi untuk mengeksekusi order arbitrase
 
-        # Mendapatkan harga aset di DEX Terra
+def execute_arbitrage_order(pair, amount):
 
-        base_price = get_asset_price(base_asset)
+    # Kode eksekusi order di sini
 
-        quote_price = get_asset_price(quote_asset)
+    # Misalnya, mengirimkan transaksi ke kontrak smart contract untuk melakukan arbitrase
 
-        # Menghitung harga tukar antara aset dasar dan kutipan
+    # Contoh penggunaan fungsi MsgExecuteContract:
 
-        exchange_rate = base_price / quote_price
+    msg = MsgExecuteContract(
 
-        # Menghitung harga arbitrase untuk setiap langkah
+        sender=terra_client.key.acc_address,
 
-        buy_price = exchange_rate
+        contract=pair.contract_address,
 
-        sell_price = 1 / exchange_rate
+        execute_msg={
 
-        # Menghitung potensi keuntungan
+            "execute_trade": {
 
-        potential_profit = (sell_price - buy_price) / buy_price * 100
+                "offer_asset": {
 
-        # Menampilkan informasi harga dan potensi keuntungan
+                    "info": {
 
-        print("===================================")
+                        "native_token": {
 
-        print("Waktu:", time.ctime())
+                            "denom": pair.base_symbol,
 
-        print(f"Harga {base_asset}: {base_price}")
+                        }
 
-        print(f"Harga {quote_asset}: {quote_price}")
+                    },
 
-        print("Exchange Rate:", exchange_rate)
+                    "amount": str(amount)
 
-        print("Buy Price:", buy_price)
+                },
 
-        print("Sell Price:", sell_price)
+                "offer_asset_2": {
 
-        print("Potensi Keuntungan:", potential_profit)
+                    "info": {
 
-        print("===================================")
+                        "native_token": {
 
-        if potential_profit >= target_profit:
+                            "denom": pair.quote_symbol,
 
-            # Memeriksa apakah keuntungan telah mencapai persentase berhenti
+                        }
 
-            if potential_profit >= stop_profit_percentage:
+                    },
 
-                print("Target keuntungan tercapai! Berhenti eksekusi.")
+                    "amount": str(amount)
 
-                break
+                },
 
-            # Menjalankan langkah-langkah arbitrase
+            }
 
-            print("Eksekusi arbitrase...")
+        },
 
-            print("Langkah 1: Beli", base_asset)
+        coins=Coins(uluna=amount),  # Jumlah dana yang akan digunakan untuk arbitrase
 
-            print("Langkah 2: Jual", quote_asset)
+    )
 
-            print("Langkah 3: Beli", quote_asset, "dengan", base_asset)
+    tx_result = terra_client.tx.create_and_broadcast(
 
-            # Simulasi eksekusi dengan mengurangi dana awal dan menambahkan keuntungan
+        msgs=[msg],
 
-            executed_profit = initial_funds * (potential_profit / 100)
+        gas_prices="0.15uluna",  # Biaya gas yang ditentukan dalam ULuna
 
-            final_funds = initial_funds + executed_profit
+        gas_adjustment="1.4",  # Penyesuaian gas
 
-            print("Hasil Eksekusi:")
+        fee_denoms=["uluna"],
 
-            print("Dana Awal:", initial_funds)
+    )
 
-            print("Keuntungan:", executed_profit)
+    return tx_result
 
-            print("Dana Akhir:", final_funds)
+# Fungsi untuk mencari semua kombinasi pasangan aset
 
-            initial_funds = final_funds  # Mengupdate dana awal dengan dana akhir setelah eksekusi
+def find_asset_pairs(assets):
 
-        time.sleep(5)  # Tunggu 5 detik sebelum melakukan pengecekan lagi
+    pairs = list(permutations(assets, 3))
 
-# Meminta input dari pengguna
+    return pairs
 
-base_asset = input("Masukkan simbol aset dasar: ")
+# Fungsi untuk melakukan screening arbitrase
 
-quote_asset = input("Masukkan simbol aset kutipan: ")
+def perform_arbitrage_screening(assets, target_profit, required_funds):
+
+    pairs = find_asset_pairs(assets)
+
+    for pair in pairs:
+
+        base_symbol, quote_symbol = pair[0], pair[2]
+
+        # Lakukan pengecekan persyaratan arbitrase
+
+        # Misalnya, memeriksa spread, likuiditas, dll.
+
+        # Contoh pemeriksaan arbitrase:
+
+        spread = calculate_spread(pair)
+
+        if spread >= target_profit:
+
+            print(f"Arbitrase ditemukan pada pasangan {base_symbol}/{quote_symbol}")
+
+            print(f"Spread: {spread}%")
+
+            # Mengeksekusi order arbitrase
+
+            amount = required_funds  # Jumlah dana yang akan digunakan untuk arbitrase
+
+            tx_result = execute_arbitrage_order(pair, amount)
+
+            # Menampilkan hasil transaksi
+
+            print("Transaksi berhasil!")
+
+            print("Hash Transaksi:", tx_result.txhash)
+
+            print("-----------------------------")
+
+# Meminta input dari pengguna untuk pasangan aset, target profit, dan dana yang dibutuhkan
+
+pair_base_symbols = input("Masukkan simbol aset base (pisahkan dengan koma): ")
+
+pair_quote_symbols = input("Masukkan simbol aset kutipan (pisahkan dengan koma): ")
 
 target_profit = float(input("Masukkan target keuntungan (%): "))
 
-initial_funds = float(input("Masukkan jumlah dana awal: "))
+required_funds = float(input("Masukkan jumlah dana yang dibutuhkan: "))
 
-stop_profit_percentage = float(input("Masukkan persentase keuntungan untuk berhenti: "))
+# Memisahkan pasangan simbol aset berdasarkan koma
 
-# Menjalankan strategi arbitrase triangular
+base_symbols = pair_base_symbols.split(",")
 
-run_triangular_arbitrage(base_asset, quote_asset
+quote_symbols = pair_quote_symbols.split(",")
 
+# Menggabungkan pasangan aset yang valid
+
+asset_pairs = [(base, quote) for base in base_symbols for quote in quote_symbols]
+
+# Melakukan screening dan eksekusi arbitrase
+
+perform_arbitrage_screening(asset_pairs, target_profit, required_funds)
