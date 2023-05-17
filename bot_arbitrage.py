@@ -4,9 +4,9 @@ import ccxt
 
 exchange = ccxt.binance({
 
-    'apiKey': 'YOUR_API_KEY',
+    'apiKey': 'hbX0DUDCzJRpICSUsAyagghbG7oII3XETOHvC1c1zs1Pr5SfzVA46xDzIA0iI2Hs',
 
-    'secret': 'YOUR_API_SECRET'
+    'secret': 'p6kM0rlWoRK2QISVEWgowx0ReCYn2JZzbzoMqDLKSyqLJAKo7D8e8miG0nIFtFXJ'
 
 })
 
