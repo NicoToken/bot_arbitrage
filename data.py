@@ -103,8 +103,8 @@ while True:
     end_hour_input = input("Masukkan jam berakhir (HH:MM): ")
 
     try:
-
-                end_hour, end_minute = map(int, end_hour_input.split(":"))
+    
+         end_hour, end_minute = map(int, end_hour_input.split(":"))
 
         if 0 <= end_hour <= 23 and 0 <= end_minute <= 59:
 
