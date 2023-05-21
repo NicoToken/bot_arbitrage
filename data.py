@@ -92,4 +92,3 @@ end_hour = int(end_hour_input)
 
 search_percentage_change(api_key, api_secret, pair, start_date, end_date, start_hour, end_hour)
 
-    
