@@ -78,17 +78,53 @@ start_date_input = input("Masukkan tanggal awal (YYYY-MM-DD): ")
 
 end_date_input = input("Masukkan tanggal akhir (YYYY-MM-DD): ")
 
-start_hour_input = input("Masukkan jam mulai (0-23): ")
+# Memvalidasi input jam mulai
 
-end_hour_input = input("Masukkan jam berakhir (0-23): ")
+while True:
+
+    start_hour_input = input("Masukkan jam mulai (HH:MM): ")
+
+    try:
+
+        start_hour, start_minute = map(int, start_hour_input.split(":"))
+
+        if 0 <= start_hour <= 23 and 0 <= start_minute <= 59:
+
+            break
+
+        else:
+
+            print("Input jam tidak valid. Harap masukkan jam dalam format HH:MM (misal: 09:30).")
+
+    except ValueError:
+
+        print("Input jam tidak valid. Harap masukkan jam dalam format HH:MM (misal: 09:30).")
+
+# Memvalidasi input jam berakhir
+
+while True:
+
+    end_hour_input = input("Masukkan jam berakhir (HH:MM): ")
+
+    try:
+
+        end_hour, end_minute = map(int, end_hour_input.split(":"))
+
+        if 0 <= end_hour <= 23 and 0 <= end_minute <= 59:
+
+            break
+
+        else:
+
+            print("Input jam tidak valid. Harap masukkan jam dalam format HH:MM (misal: 09:30).")
+
+    except ValueError:
+
+        print("Input jam tidak valid. Harap masukkan jam dalam format HH:MM (misal: 09:30).")
 
 start_date = datetime.datetime.strptime(start_date_input, "%Y-%m-%d")
 
 end_date = datetime.datetime.strptime(end_date_input, "%Y-%m-%d")
-
-start_hour = int(start_hour_input)
-
-end_hour = int(end_hour_input)
 
 search_percentage_change(api_key, api_secret, pair, start_date, end_date, start_hour, end_hour)
 
