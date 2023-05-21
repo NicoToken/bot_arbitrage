@@ -118,10 +118,7 @@ while True:
 
             print("Input jam tidak valid. Harap masukkan jam dalam format HH:MM (misal: 09:30).")
 
-    except ValueError:
-
-        print("Input jam tidak valid. Harap masukkan jam dalam format HH:MM (misal: 09:30).")
-
+    
 start_date = datetime.datetime.strptime(start_date_input, "%Y-%m-%d")
 
 end_date = datetime.datetime.strptime(end_date_input, "%Y-%m-%d")
