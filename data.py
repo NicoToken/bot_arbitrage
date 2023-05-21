@@ -67,8 +67,7 @@ def search_percentage_change(api_key, api_secret, pair, start_date, end_date, st
 
     print(f"{total_percentage_change:.2f}%")
 
-
-    api_key = input("Masukkan API Key Binance: ")
+api_key = input("Masukkan API Key Binance: ")
 
 api_secret = input("Masukkan API Secret Binance: ")
 
@@ -90,4 +89,6 @@ start_hour = int(start_hour_input)
 
 end_hour = int(end_hour_input)
 
-search_percentage_change(api_key)
+search_percentage_change(api_key, api_secret, pair, start_date, end_date, start_hour, end_hour)
+
+    
