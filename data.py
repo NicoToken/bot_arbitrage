@@ -42,6 +42,8 @@ def search_percentage_change(api_key, api_secret, start_date, end_date, target_h
 
     end_date = end_date.replace(hour=target_hour, minute=0, second=0, microsecond=0)
 
+    total_percentage_change = 0.0  # Inisialisasi total persentase
+
     while current_date <= end_date:
 
         start_time = convert_to_timestamp(current_date)
@@ -54,13 +56,19 @@ def search_percentage_change(api_key, api_secret, start_date, end_date, target_h
 
             color = Fore.GREEN if percentage_change > 0 else Fore.RED
 
-            print(color + f"Persentase kenaikan BTC/USD pada {current_date.strftime('%Y-%m-%d')} jam {target_hour} adalah {percentage_change}%" + Style.RESET_ALL)
+            print(color + f"Persentase kenaikan BTC/USD pada {current_date.strftime('%Y-%m-%d')} jam {target_hour} adalah {percentage_change:.2f}%" + Style.RESET_ALL)
+
+            total_percentage_change += percentage_change
 
         else:
 
             print(f"Tidak ada data untuk {current_date.strftime('%Y-%m-%d')} jam {target_hour}")
 
         current_date += datetime.timedelta(days=1)
+
+    print("\nTotal Persentase Kenaikan:")
+
+    print(f"{total_percentage_change:.2f}%")
 
 # Mendapatkan input API key dan secret dari pengguna melalui terminal
 
