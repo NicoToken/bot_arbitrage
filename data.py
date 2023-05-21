@@ -1,11 +1,8 @@
-import requests
-
 import datetime
 
+import requests
+
 from colorama import Fore, Style
-
-# Fungsi untuk mendapatkan kenaikan harga pasangan mata uang pada jam tertentu
-
 def get_percentage_change(api_key, api_secret, pair, start_time, end_time):
 
     url = f"https://api.binance.com/api/v3/klines?symbol={pair}&interval=1h&startTime={start_time}&endTime={end_time}"
@@ -28,13 +25,9 @@ def get_percentage_change(api_key, api_secret, pair, start_time, end_time):
 
         return None
 
-# Fungsi untuk mengubah waktu menjadi format timestamp Binance
-
 def convert_to_timestamp(date_time):
 
     return int(date_time.timestamp() * 1000)
-
-# Fungsi utama untuk mencari data kenaikan pasangan mata uang pada jam tertentu dalam rentang waktu yang ditentukan
 
 def search_percentage_change(api_key, api_secret, pair, start_date, end_date, start_hour, end_hour):
 
@@ -73,29 +66,21 @@ def search_percentage_change(api_key, api_secret, pair, start_date, end_date, st
     print("\nTotal Persentase Kenaikan:")
 
     print(f"{total_percentage_change:.2f}%")
-    # Mendapatkan input API key dan secret dari pengguna melalui terminal
 
-api_key = input("Masukkan API Key Binance: ")
+
+    api_key = input("Masukkan API Key Binance: ")
 
 api_secret = input("Masukkan API Secret Binance: ")
 
-# Mendapatkan input pasangan mata uang (pair) dari pengguna melalui terminal
-
 pair = input("Masukkan pasangan mata uang (pair): ")
-
-# Mendapatkan input tanggal awal, tanggal akhir dari pengguna melalui terminal
 
 start_date_input = input("Masukkan tanggal awal (YYYY-MM-DD): ")
 
 end_date_input = input("Masukkan tanggal akhir (YYYY-MM-DD): ")
 
-# Mendapatkan input jam mulai dan jam berakhir dari pengguna melalui terminal
-
 start_hour_input = input("Masukkan jam mulai (0-23): ")
 
 end_hour_input = input("Masukkan jam berakhir (0-23): ")
-
-# Mengubah input tanggal dan jam menjadi objek datetime
 
 start_date = datetime.datetime.strptime(start_date_input, "%Y-%m-%d")
 
@@ -105,6 +90,4 @@ start_hour = int(start_hour_input)
 
 end_hour = int(end_hour_input)
 
-# Memanggil fungsi search_percentage_change dengan parameter yang diperlukan
-
-search_percentage_change(api_key, api_secret, pair, start_date, end_date, start_hour, end_hour)
+search_percentage_change(api_key
