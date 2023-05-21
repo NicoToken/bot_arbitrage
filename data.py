@@ -1,6 +1,6 @@
-import datetime
-
 import requests
+
+import datetime
 
 from colorama import Fore, Style
 
@@ -73,8 +73,23 @@ def search_percentage_change(api_key, api_secret, pair, start_date, end_date, st
     print("\nTotal Persentase Kenaikan:")
 
     print(f"{total_percentage_change:.2f}%")
+# Mendapatkan input API key dan secret dari pengguna melalui terminal
 
-# Mendapatkan input jam mulai (0-23) dan jam berakhir (0-23) dari pengguna melalui terminal
+api_key = input("Masukkan API Key Binance: ")
+
+api_secret = input("Masukkan API Secret Binance: ")
+
+# Mendapatkan input pasangan mata uang (pair) dari pengguna melalui terminal
+
+pair = input("Masukkan pasangan mata uang (pair): ")
+
+# Mendapatkan input tanggal awal, tanggal akhir dari pengguna melalui terminal
+
+start_date_input = input("Masukkan tanggal awal (YYYY-MM-DD): ")
+
+end_date_input = input("Masukkan tanggal akhir (YYYY-MM-DD): ")
+
+# Mendapatkan input jam mulai dan jam berakhir dari pengguna melalui terminal
 
 start_hour_input = input("Masukkan jam mulai (0-23): ")
 
