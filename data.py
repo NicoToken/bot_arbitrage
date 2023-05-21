@@ -14,17 +14,21 @@ def get_percentage_change(api_key, api_secret, pair, start_time, end_time):
 
     if data and len(data) > 0:
 
-        open_price = float(data[0][1])
+        if len(data[0]) >= 5 and len(data[-1]) >= 5:
 
-        close_price = float(data[-1][4])
+            open_price = float(data[0][1])
 
-        percentage_change = ((close_price - open_price) / open_price) * 100
+            close_price = float(data[-1][4])
 
-        return percentage_change
+            percentage_change = ((close_price - open_price) / open_price) * 100
 
-    else:
+            return percentage_change
 
-        return None
+    return None
+
+# Kode lainnya...
+
+
 
 def convert_to_timestamp(date_time):
 
