@@ -3,6 +3,7 @@ import datetime
 import requests
 
 from colorama import Fore, Style
+
 def get_percentage_change(api_key, api_secret, pair, start_time, end_time):
 
     url = f"https://api.binance.com/api/v3/klines?symbol={pair}&interval=1h&startTime={start_time}&endTime={end_time}"
