@@ -73,6 +73,7 @@ def search_percentage_change(api_key, api_secret, pair, start_date, end_date, st
     print("\nTotal Persentase Kenaikan:")
 
     print(f"{total_percentage_change:.2f}%")
+
 # Mendapatkan input jam mulai (0-23) dan jam berakhir (0-23) dari pengguna melalui terminal
 
 start_hour_input = input("Masukkan jam mulai (0-23): ")
