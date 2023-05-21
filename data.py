@@ -12,7 +12,7 @@ def get_percentage_change(api_key, api_secret, pair, start_time, end_time):
 
     data = response.json()
 
-    if len(data) > 0:
+    if data and len(data) > 0:
 
         open_price = float(data[0][1])
 
@@ -25,6 +25,7 @@ def get_percentage_change(api_key, api_secret, pair, start_time, end_time):
     else:
 
         return None
+
 
 def convert_to_timestamp(date_time):
 
