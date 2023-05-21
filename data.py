@@ -1,6 +1,6 @@
-import datetime
-
 import requests
+
+import datetime
 
 from colorama import Fore, Style
 
@@ -25,7 +25,6 @@ def get_percentage_change(api_key, api_secret, pair, start_time, end_time):
     else:
 
         return None
-
 
 def convert_to_timestamp(date_time):
 
@@ -97,7 +96,7 @@ while True:
 
             print("Input jam tidak valid. Harap masukkan jam dalam format HH:MM (misal: 09:30).")
 
-    except ValueError:
+   except ValueError:
 
         print("Input jam tidak valid. Harap masukkan jam dalam format HH:MM (misal: 09:30).")
 
