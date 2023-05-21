@@ -36,19 +36,23 @@ def convert_to_timestamp(date_time):
 
 # Fungsi utama untuk mencari data kenaikan pasangan mata uang pada jam tertentu dalam rentang waktu yang ditentukan
 
-def search_percentage_change(api_key, api_secret, pair, start_date, end_date, target_hour):
+def search_percentage_change(api_key, api_secret, pair, start_date, end_date, start_hour, end_hour):
 
     current_date = start_date
 
-    end_date = end_date.replace(hour=target_hour, minute=0, second=0, microsecond=0)
+    end_date = end_date.replace(hour=end_hour, minute=59, second=0, microsecond=0)
 
     total_percentage_change = 0.0  # Inisialisasi total persentase
 
     while current_date <= end_date:
 
-        start_time = convert_to_timestamp(current_date)
+        start_time = current_date.replace(hour=start_hour, minute=1, second=0, microsecond=0)
 
-        end_time = start_time + 3600000  # Satu jam dalam milidetik
+        end_time = current_date.replace(hour=end_hour, minute=59, second=0, microsecond=0)
+
+        start_time = convert_to_timestamp(start_time)
+
+        end_time = convert_to_timestamp(end_time)
 
         percentage_change = get_percentage_change(api_key, api_secret, pair, start_time, end_time)
 
@@ -56,13 +60,13 @@ def search_percentage_change(api_key, api_secret, pair, start_date, end_date, ta
 
             color = Fore.GREEN if percentage_change > 0 else Fore.RED
 
-            print(color + f"Persentase kenaikan {pair} pada {current_date.strftime('%Y-%m-%d')} jam {target_hour} adalah {percentage_change:.2f}%" + Style.RESET_ALL)
+            print(color + f"Persentase kenaikan {pair} pada {current_date.strftime('%Y-%m-%d')} jam {start_hour}:01-{end_hour}:59 adalah {percentage_change:.2f}%" + Style.RESET_ALL)
 
             total_percentage_change += percentage_change
 
         else:
 
-            print(f"Tidak ada data untuk {current_date.strftime('%Y-%m-%d')} jam {target_hour}")
+            print(f"Tidak ada data untuk {current_date.strftime('%Y-%m-%d')} jam {start_hour}:01-{end_hour}:59")
 
         current_date += datetime.timedelta(days=1)
 
@@ -80,17 +84,29 @@ api_secret = input("Masukkan API Secret Binance: ")
 
 pair = input("Masukkan pasangan mata uang (pair): ")
 
-# Mendapatkan input tanggal awal, tanggal akhir, dan jam dari pengguna melalui terminal
+# Mendapatkan input tanggal awal, tanggal akhir dari pengguna melalui terminal
 
 start_date_input = input("Masukkan tanggal awal (YYYY-MM-DD): ")
 
 end_date_input = input("Masukkan tanggal akhir (YYYY-MM-DD): ")
 
-target_hour_input = input("Masukkan jam (0-23): ")
+# Mendapatkan input jam mulai dan jam berakhir dari pengguna melalui terminal
+
+start_hour_input = input("Masukkan jam mulai (0-23): ")
+
+akhir_input = input("Masukkan jam berakhir (0-23): ")
 
 # Mengubah input tanggal dan jam menjadi objek datetime
 
 start_date = datetime.datetime.strptime(start_date_input, "%Y-%m-%d")
 
-end_date = datetime.datetime.strptime(end_date
+end_date = datetime.datetime.strptime(end_date_input, "%Y-%m-%d")
+
+start_hour = int(start_hour_input)
+
+end_hour = int(end_hour_input)
+
+# Memanggil fungsi search_percentage_change dengan parameter yang diperlukan
+
+search_percentage_change(api_key, api_secret, pair, start_date, end_date, start_hour, end_hour)
 
