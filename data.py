@@ -14,7 +14,7 @@ def get_percentage_change(api_key, api_secret, pair, start_time, end_time):
 
     data = response.json()
 
-    if len(data) > 1:
+    if len(data) > 0:
 
         open_price = float(data[0][1])
 
@@ -73,7 +73,7 @@ def search_percentage_change(api_key, api_secret, pair, start_date, end_date, st
     print("\nTotal Persentase Kenaikan:")
 
     print(f"{total_percentage_change:.2f}%")
-# Mendapatkan input API key dan secret dari pengguna melalui terminal
+    # Mendapatkan input API key dan secret dari pengguna melalui terminal
 
 api_key = input("Masukkan API Key Binance: ")
 
@@ -108,5 +108,3 @@ end_hour = int(end_hour_input)
 # Memanggil fungsi search_percentage_change dengan parameter yang diperlukan
 
 search_percentage_change(api_key, api_secret, pair, start_date, end_date, start_hour, end_hour)
-
-
