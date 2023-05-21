@@ -26,10 +26,6 @@ def get_percentage_change(api_key, api_secret, pair, start_time, end_time):
 
     return None
 
-# Kode lainnya...
-
-
-
 def convert_to_timestamp(date_time):
 
     return int(date_time.timestamp() * 1000)
@@ -40,7 +36,7 @@ def search_percentage_change(api_key, api_secret, pair, start_date, end_date, st
 
     end_date = end_date.replace(hour=end_hour, minute=59, second=0, microsecond=0)
 
-    total_percentage_change = 0.0  # Inisialisasi total persentase
+    total_percentage_change = 0.0
 
     while current_date <= end_date:
 
@@ -82,8 +78,6 @@ start_date_input = input("Masukkan tanggal awal (YYYY-MM-DD): ")
 
 end_date_input = input("Masukkan tanggal akhir (YYYY-MM-DD): ")
 
-# Memvalidasi input jam mulai
-
 while True:
 
     start_hour_input = input("Masukkan jam mulai (HH:MM): ")
@@ -104,15 +98,13 @@ while True:
 
         print("Input jam tidak valid. Harap masukkan jam dalam format HH:MM (misal: 09:30).")
 
-# Memvalidasi input jam berakhir
-
 while True:
 
     end_hour_input = input("Masukkan jam berakhir (HH:MM): ")
 
     try:
 
-        end_hour, end_minute = map(int, end_hour_input.split(":"))
+                end_hour, end_minute = map(int, end_hour_input.split(":"))
 
         if 0 <= end_hour <= 23 and 0 <= end_minute <= 59:
 
