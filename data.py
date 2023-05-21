@@ -96,7 +96,7 @@ while True:
 
             print("Input jam tidak valid. Harap masukkan jam dalam format HH:MM (misal: 09:30).")
 
-   except ValueError:
+    except ValueError:
 
         print("Input jam tidak valid. Harap masukkan jam dalam format HH:MM (misal: 09:30).")
 
@@ -118,10 +118,12 @@ while True:
 
             print("Input jam tidak valid. Harap masukkan jam dalam format HH:MM (misal: 09:30).")
 
-    
+    except ValueError:
+
+        print("Input jam tidak valid. Harap masukkan jam dalam format HH:MM (misal: 09:30).")
+
 start_date = datetime.datetime.strptime(start_date_input, "%Y-%m-%d")
 
 end_date = datetime.datetime.strptime(end_date_input, "%Y-%m-%d")
 
 search_percentage_change(api_key, api_secret, pair, start_date, end_date, start_hour, end_hour)
-
