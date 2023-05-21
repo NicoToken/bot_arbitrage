@@ -90,4 +90,4 @@ start_hour = int(start_hour_input)
 
 end_hour = int(end_hour_input)
 
-search_percentage_change(api_key
+search_percentage_change(api_key)
