@@ -24,7 +24,9 @@ exchange = ccxt.binance({
 
     'apiKey': api_key,
 
-    'secret': api_secret
+    'secret': api_secret,
+
+    'enableRateLimit': True
 
 })
 
@@ -33,6 +35,8 @@ exchange = ccxt.binance({
 markets = exchange.load_markets()
 
 while True:
+
+    screened_pairs = []  # Daftar pasangan mata uang yang disaring
 
     for symbol in markets:
 
@@ -46,33 +50,47 @@ while True:
 
             if base_currency + '/' + quote_currency in markets and quote_currency + '/' + base_currency in markets:
 
-                price1 = get_price(base_currency + '/' + quote_currency)
+                screened_pairs.append(symbol)
 
-                price2 = get_price(quote_currency + '/' + base_currency)
+    # Cetak daftar pasangan mata uang yang disaring
 
-                price3 = get_price(symbol)
+    print("Daftar pasangan mata uang yang disaring:")
 
-                if price1 and price2 and price3:
+    for pair in screened_pairs:
 
-                    # Menghitung arbitrase triangular
+        print(pair)
 
-                    arb_opportunity = (1 / price1) * price3 * price2 - 1
+    print("-" * 40)
 
-                    if arb_opportunity > 0:
+    for symbol in screened_pairs:
 
-                        percent_profit = arb_opportunity * 100
+        price1 = get_price(base_currency + '/' + quote_currency)
 
-                        print("Peluang arbitrase triangular ditemukan pada pasangan", symbol)
+        price2 = get_price(quote_currency + '/' + base_currency)
 
-                        print("Beli", base_currency, "di harga", price1)
+        price3 = get_price(symbol)
 
-                        print("Jual", quote_currency, "di harga", price2)
+        if price1 and price2 and price3:
 
-                        print("Jual", symbol, "di harga", price3)
+            # Menghitung arbitrase triangular
 
-                        print("Profit estimasi: {:.2f}%".format(percent_profit))
+            arb_opportunity = (1 / price1) * price3 * price2 - 1
 
-                        print("-" * 40)
+            if arb_opportunity > 0:
+
+                percent_profit = arb_opportunity * 100
+
+                print("Peluang arbitrase triangular ditemukan pada pasangan", symbol)
+
+                print("Beli", base_currency, "di harga", price1)
+
+                print("Jual", quote_currency, "di harga", price2)
+
+                print("Jual", symbol, "di harga", price3)
+
+                print("Profit estimasi: {:.2f}%".format(percent_profit))
+
+                print("-" * 40)
 
     # Menunggu interval yang ditentukan sebelum memeriksa kembali
 
