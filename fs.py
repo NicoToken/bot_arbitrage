@@ -44,15 +44,7 @@ def find_future_symbol(spot_symbol):
 
 # Fungsi utama untuk menjalankan strategi arbitrase
 
-def run_arbitrage(spot_symbol, threshold, quantity, target_profit, interval):
-
-    future_symbol = find_future_symbol(spot_symbol)
-
-    if future_symbol is None:
-
-        print("Tidak dapat menemukan pasangan future untuk", spot_symbol)
-
-        return
+def run_arbitrage(spot_symbol, future_symbol, threshold, quantity, target_profit, interval):
 
     while True:
 
@@ -132,7 +124,9 @@ def run_arbitrage(spot_symbol, threshold, quantity, target_profit, interval):
 
                 break
 
-        time.sleep(interval)  # Tunggu interval detik sebelum melakukan pengecekan lagi
+        time.sleep(interval)
+
+        # Tunggu interval detik sebelum melakukan pengecekan lagi
 
 # Meminta input dari pengguna untuk API Key dan Secret Key
 
@@ -150,6 +144,8 @@ exchange.secret = api_secret
 
 spot_symbol = input("Masukkan simbol aset pasar spot (misalnya BTC/USDT): ")
 
+future_symbol = input("Masukkan simbol aset pasar future (misalnya BTCUSDT): ")
+
 threshold = float(input("Masukkan threshold arbitrase: "))
 
 quantity = float(input("Masukkan kuantitas yang akan dieksekusi: "))
@@ -160,5 +156,5 @@ interval = int(input("Masukkan interval screening (detik): "))
 
 # Menjalankan strategi arbitrase
 
-run_arbitrage(spot_symbol, threshold, quantity, target_profit, interval)
+run_arbitrage(spot_symbol, future_symbol, threshold, quantity, target_profit, interval)
 
