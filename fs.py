@@ -121,7 +121,6 @@ future_symbol = find_future_symbol(spot_symbol)
 if future_symbol is None:
 
     print("Simbol future tidak ditemukan. Pastikan simbol spot yang Anda masukkan valid.")
-
     else:
 
     threshold = float(input("Masukkan threshold arbitrase (misalnya 12,23%): ").rstrip('%')) / 100
