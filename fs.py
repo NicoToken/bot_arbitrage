@@ -121,7 +121,28 @@ future_symbol = find_future_symbol(spot_symbol)
 if future_symbol is None:
 
     print("Simbol future tidak ditemukan. Pastikan simbol spot yang Anda masukkan valid.")
-    else:
+
+else:
+
+    threshold = float(input("Masukkan threshold arbitrase (misalnya
+
+api_key = input("Masukkan API Key Anda: ")
+
+api_secret = input("Masukkan Secret Key Anda: ")
+
+exchange.apiKey = api_key
+
+exchange.secret = api_secret
+
+spot_symbol = input("Masukkan simbol aset pasar spot (misalnya BTC/USDT): ")
+
+future_symbol = find_future_symbol(spot_symbol)
+
+if future_symbol is None:
+
+    print("Simbol future tidak ditemukan. Pastikan simbol spot yang Anda masukkan valid.")
+
+else:
 
     threshold = float(input("Masukkan threshold arbitrase (misalnya 12,23%): ").rstrip('%')) / 100
 
@@ -132,4 +153,3 @@ if future_symbol is None:
     interval = int(input("Masukkan interval screening (detik): "))
 
     run_arbitrage(spot_symbol, future_symbol, threshold, quantity, target_profit, interval)
-
