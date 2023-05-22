@@ -28,9 +28,31 @@ def calculate_profit_loss(initial_value, final_value):
 
     return ((final_value - initial_value) / initial_value) * 100
 
+# Fungsi untuk mencari pasangan future berdasarkan pasangan spot
+
+def find_future_symbol(spot_symbol):
+
+    markets = exchange.load_markets()
+
+    for symbol in markets:
+
+        if symbol.startswith(spot_symbol) and '-PERP' in symbol:
+
+            return symbol
+
+    return None
+
 # Fungsi utama untuk menjalankan strategi arbitrase
 
-def run_arbitrage(spot_symbol, future_symbol, threshold, quantity, target_profit, interval):
+def run_arbitrage(spot_symbol, threshold, quantity, target_profit, interval):
+
+    future_symbol = find_future_symbol(spot_symbol)
+
+    if future_symbol is None:
+
+        print("Tidak dapat menemukan pasangan future untuk", spot_symbol)
+
+        return
 
     while True:
 
@@ -128,8 +150,6 @@ exchange.secret = api_secret
 
 spot_symbol = input("Masukkan simbol aset pasar spot (misalnya BTC/USDT): ")
 
-future_symbol = input("Masukkan simbol aset pasar future (misalnya BTC-USD-20230520): ")
-
 threshold = float(input("Masukkan threshold arbitrase: "))
 
 quantity = float(input("Masukkan kuantitas yang akan dieksekusi: "))
@@ -140,5 +160,5 @@ interval = int(input("Masukkan interval screening (detik): "))
 
 # Menjalankan strategi arbitrase
 
-run_arbitrage(spot_symbol, future_symbol, threshold, quantity, target_profit, interval)
+run_arbitrage(spot_symbol, threshold, quantity, target_profit, interval)
 
