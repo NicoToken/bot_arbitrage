@@ -162,9 +162,7 @@ min_surface_rate = profit_loss_perc
 
 return surface_dict
 
-def find_arbitrage_opportunities(triangular_pairs_list, api_key, api_secret):
-
-arbitrage_opportunities = []
+def find_arbitrage_opportunities(triangular_pairs_list, api_key, api_secret):arbitrage_opportunities = []
 
 for t_pair in triangular_pairs_list:
 
