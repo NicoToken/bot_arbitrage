@@ -2,128 +2,142 @@ import ccxt
 
 import time
 
-# Fungsi untuk mendapatkan daftar pasangan mata uang yang tersedia di Binance
+# Inisialisasi exchange Binance
 
-def get_available_pairs(exchange):
+exchange = ccxt.binance()
 
-    markets = exchange.fetch_markets()
+# Fungsi untuk mendapatkan harga aset di pasar future
 
-    pairs = []
+def get_future_price(symbol):
 
-    for market in markets:
+    future_ticker = exchange.fetch_ticker(symbol)
 
-        if market['spot']:
+    return float(future_ticker['bid'])
 
-            pairs.append(market['symbol'])
+# Fungsi untuk mendapatkan harga aset di pasar spot
 
-    return pairs
+def get_spot_price(symbol):
 
-# Fungsi untuk menampilkan daftar pasangan mata uang di terminal
+    spot_ticker = exchange.fetch_ticker(symbol)
 
-def print_pairs(pairs):
+    return float(spot_ticker['bid'])
 
-    print("Pair yang tersedia:")
+# Fungsi untuk menghitung persentase keuntungan/kerugian
 
-    for pair in pairs:
+def calculate_profit_loss(initial_value, final_value):
 
-        print(pair)
+    return ((final_value - initial_value) / initial_value) * 100
 
-# Fungsi untuk menampilkan hasil screening pasangan mata uang di terminal
+# Fungsi utama untuk menjalankan strategi arbitrase
 
-def print_screened_pairs(pairs, threshold):
+def run_arbitrage(spot_symbol, future_symbol, threshold, quantity, target_profit):
 
-    print("Pair yang memenuhi threshold:")
+    while True:
 
-    for pair in pairs:
+        future_price = get_future_price(future_symbol)
 
-        # Mendapatkan harga spot
+        spot_price = get_spot_price(spot_symbol)
 
-        spot_ticker = exchange.fetch_ticker(pair)
+        price_diff_percentage = ((future_price - spot_price) / spot_price) * 100
 
-        spot_price = spot_ticker['last']
+        print("===================================")
 
-        # Mendapatkan harga future
+        print("Waktu:", time.ctime())
 
-        future_pair = pair.replace('/', '_')
+        print("Harga future:", future_price)
 
-        future_ticker = exchange.fetch_ticker(f'{pair}_PERP')
+        print("Harga spot:", spot_price)
 
-        future_price = future_ticker['last']
+        print("Selisih persentase:", price_diff_percentage)
 
-        # Menghitung selisih persentase antara harga spot dan future
+        print("Threshold:", threshold)
 
-        spread = (future_price - spot_price) / spot_price * 100
+        print("Kuantitas yang akan dieksekusi:", quantity)
 
-        # Menampilkan pasangan mata uang jika selisih persentase melebihi threshold
+        print("===================================")
 
-        if spread > threshold:
+        if price_diff_percentage >= threshold:
 
-            print(f"Pair: {pair}, Spread: {spread}%")
+            # Logika pembelian dan penjualan
 
-# Mengambil input dari pengguna
+            # Implementasikan strategi Anda di sini
 
-api_key = input("Masukkan API Key: ")
+            # Misalnya, melakukan pembelian di pasar spot dan menjual di pasar future
 
-secret_key = input("Masukkan Secret Key: ")
+            # Membeli aset di pasar spot
 
-threshold = float(input("Masukkan Threshold: "))
+            buy_order = exchange.create_market_buy_order(symbol=spot_symbol, quantity=quantity)
 
-interval = int(input("Masukkan Interval (detik): "))
+            print("Order pembelian di pasar spot:", buy_order)
 
-# Membuat objek exchange menggunakan CCXT
+            buy_price = float(buy_order['fills'][0]['price'])
 
-exchange = ccxt.binance({
+            # Menjual aset di pasar future
 
-    'apiKey': api_key,
+            sell_order = exchange.create_market_sell_order(symbol=future_symbol, quantity=quantity)
 
-    'secret': secret_key,
+            print("Order penjualan di pasar future:", sell_order)
 
-    'enableRateLimit': True,
+            sell_price = float(sell_order['fills'][0]['price'])
 
-})
+            profit_loss_percentage = calculate_profit_loss(buy_price, sell_price)
 
-# Mendapatkan daftar pasangan mata uang yang tersedia
+            print("Peluang arbitrase terdeteksi!")
 
-pairs = get_available_pairs(exchange)
+            print("Harga future:", future_price)
 
-# Menampilkan daftar pasangan mata uang di terminal
+            print("Harga spot:", spot_price)
 
-print_pairs(pairs)
+            print("Selisih persentase:", price_diff_percentage)
 
-# Melakukan screening pasangan mata uang dan arbitrase jika memenuhi threshold
+            print("Keuntungan/Kerugian (%):", profit_loss_percentage)
 
-while True:
+            if profit_loss_percentage >= target_profit:
 
-    screened_pairs = []
+                print("Target keuntungan tercapai! Menutup order.")
 
-    for pair in pairs:
+                # Menutup order beli di pasar spot
 
-        # Mendapatkan harga spot
+                close_buy_order = exchange.create_market_sell_order(symbol=spot_symbol, quantity=quantity)
 
-        spot_ticker = exchange.fetch_ticker(pair)
+                print("Order penjualan di pasar spot:", close_buy_order)
 
-        spot_price = spot_ticker['last']
+                # Menutup order jual di pasar future
 
-        # Mendapatkan harga future
+                close_sell_order = exchange.create_market_buy_order(symbol=future_symbol, quantity=quantity)
 
-        future_pair = pair.replace('/', '_')
+                print("Order pembelian di pasar future:", close_sell_order)
 
-        future_ticker = exchange.fetch_ticker(f'{pair}_PERP')
+                break
 
-        future_price = future_ticker['last']
+        time.sleep(5)  # Tunggu 5 detik sebelum melakukan pengecekan lagi
 
-        # Menghitung selisih persentase antara harga spot dan future
+# Meminta input dari pengguna untuk API Key dan Secret Key
 
-        spread = (future_price - spot_price) / spot_price * 100
+api_key = input("Masukkan API Key Anda: ")
 
-        # Menambahkan pasangan mata uang ke daftar screened_pairs jika selisih persentase melebihi threshold
+api_secret = input("Masukkan Secret Key Anda: ")
 
-        if spread > threshold:
+# Mengatur API Key dan Secret Key pada exchange Binance
 
-            screened_pairs.append(pair)
+exchange.apiKey = api_key
 
-        # Menampilkan pasangan mata uang hasil screening di terminal
+exchange.secret = api_secret
 
-    print_screened_pairs(screened_pairs, threshold)
+# Meminta input dari pengguna untuk simbol aset, threshold, kuantitas, dan target keuntungan
 
-    time.sleep(interval)
+spot_symbol = input("Masukkan simbol aset pasar spot (misalnya BTC/USDT): ")
+
+future_symbol = input("Masukkan simbol aset pasar future (misalnya BTC-USD-20230520): ")
+
+threshold = float(input("Masukkan threshold arbitrase: "))
+
+quantity = float(input("Masukkan kuantitas yang akan dieksekusi: "))
+
+target_profit = float(input("Masukkan target keuntungan (%): "))
+
+# Menjalankan strategi arbitrase
+
+run_arbitrage(spot_symbol, future_symbol, threshold, quantity, target_profit)
+
+
