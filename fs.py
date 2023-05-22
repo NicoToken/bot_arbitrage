@@ -2,7 +2,11 @@ import ccxt
 
 import time
 
+# Inisialisasi exchange Binance
+
 exchange = ccxt.binance()
+
+# Fungsi untuk mendapatkan harga aset di pasar future
 
 def get_future_price(symbol):
 
@@ -10,33 +14,35 @@ def get_future_price(symbol):
 
     return float(future_ticker['bid'])
 
+# Fungsi untuk mendapatkan harga aset di pasar spot
+
 def get_spot_price(symbol):
 
     spot_ticker = exchange.fetch_ticker(symbol)
 
     return float(spot_ticker['bid'])
 
+# Fungsi untuk menghitung persentase keuntungan/kerugian
+
 def calculate_profit_loss(initial_value, final_value):
 
     return ((final_value - initial_value) / initial_value) * 100
+
+# Fungsi untuk mencari pasangan future berdasarkan pasangan spot
 
 def find_future_symbol(spot_symbol):
 
     markets = exchange.load_markets()
 
-    spot_base = spot_symbol.split('/')[0]
-
     for symbol in markets:
 
-        if markets[symbol]['future'] and markets[symbol]['active']:
+        if symbol.startswith(spot_symbol) and '-PERP' in symbol:
 
-            future_base = symbol.split('/')[0]
-
-            if spot_base == future_base:
-
-                return symbol
+            return symbol
 
     return None
+
+# Fungsi utama untuk menjalankan strategi arbitrase
 
 def run_arbitrage(spot_symbol, future_symbol, threshold, quantity, target_profit, interval):
 
@@ -56,9 +62,9 @@ def run_arbitrage(spot_symbol, future_symbol, threshold, quantity, target_profit
 
         print("Harga spot:", spot_price)
 
-        print("Selisih persentase: {:.2f}%".format(price_diff_percentage))
+        print("Selisih persentase:", price_diff_percentage)
 
-        print("Threshold: {:.2f}%".format(threshold))
+        print("Threshold:", threshold)
 
         print("Kuantitas yang akan dieksekusi:", quantity)
 
@@ -66,11 +72,21 @@ def run_arbitrage(spot_symbol, future_symbol, threshold, quantity, target_profit
 
         if price_diff_percentage >= threshold:
 
+            # Logika pembelian dan penjualan
+
+            # Implementasikan strategi Anda di sini
+
+            # Misalnya, melakukan pembelian di pasar spot dan menjual di pasar future
+
+            # Membeli aset di pasar spot
+
             buy_order = exchange.create_market_buy_order(symbol=spot_symbol, quantity=quantity)
 
             print("Order pembelian di pasar spot:", buy_order)
 
             buy_price = float(buy_order['fills'][0]['price'])
+
+            # Menjual aset di pasar future
 
             sell_order = exchange.create_market_sell_order(symbol=future_symbol, quantity=quantity)
 
@@ -86,17 +102,21 @@ def run_arbitrage(spot_symbol, future_symbol, threshold, quantity, target_profit
 
             print("Harga spot:", spot_price)
 
-            print("Selisih persentase: {:.2f}%".format(price_diff_percentage))
+            print("Selisih persentase:", price_diff_percentage)
 
-            print("Keuntungan/Kerugian (%): {:.2f}%".format(profit_loss_percentage))
+            print("Keuntungan/Kerugian (%):", profit_loss_percentage)
 
             if profit_loss_percentage >= target_profit:
 
                 print("Target keuntungan tercapai! Menutup order.")
 
+                # Menutup order beli di pasar spot
+
                 close_buy_order = exchange.create_market_sell_order(symbol=spot_symbol, quantity=quantity)
 
                 print("Order penjualan di pasar spot:", close_buy_order)
+
+                # Menutup order jual di pasar future
 
                 close_sell_order = exchange.create_market_buy_order(symbol=future_symbol, quantity=quantity)
 
@@ -106,31 +126,35 @@ def run_arbitrage(spot_symbol, future_symbol, threshold, quantity, target_profit
 
         time.sleep(interval)
 
+        # Tunggu interval detik sebelum melakukan pengecekan lagi
+
+# Meminta input dari pengguna untuk API Key dan Secret Key
+
 api_key = input("Masukkan API Key Anda: ")
 
 api_secret = input("Masukkan Secret Key Anda: ")
+
+# Mengatur API Key dan Secret Key pada exchange Binance
 
 exchange.apiKey = api_key
 
 exchange.secret = api_secret
 
+# Meminta input dari pengguna untuk simbol aset, threshold, kuantitas, target keuntungan, dan interval
+
 spot_symbol = input("Masukkan simbol aset pasar spot (misalnya BTC/USDT): ")
 
-future_symbol = find_future_symbol(spot_symbol)
+future_symbol = input("Masukkan simbol aset pasar future (misalnya BTCUSDT): ")
 
-if future_symbol is None:
+threshold = float(input("Masukkan threshold arbitrase: "))
 
-    print("Simbol future tidak ditemukan. Pastikan simbol spot yang Anda masukkan valid.")
+quantity = float(input("Masukkan kuantitas yang akan dieksekusi: "))
 
-else:
+target_profit = float(input("Masukkan target keuntungan (%): "))
 
-    threshold = float(input("Masukkan threshold arbitrase (misalnya 12,23%): ").rstrip('%')) / 100
+interval = int(input("Masukkan interval screening (detik): "))
 
-    quantity = float(input("Masukkan kuantitas yang akan dieksekusi: "))
+# Menjalankan strategi arbitrase
 
-    target_profit = float(input("Masukkan target keuntungan (%): "))
-
-    interval = int(input("Masukkan interval screening (detik): "))
-
-    run_arbitrage(spot_symbol, future_symbol, threshold, quantity, target_profit, interval)
+run_arbitrage(spot_symbol, future_symbol, threshold, quantity, target_profit, interval)
 
