@@ -30,7 +30,7 @@ def calculate_profit_loss(initial_value, final_value):
 
 # Fungsi utama untuk menjalankan strategi arbitrase
 
-def run_arbitrage(spot_symbol, future_symbol, threshold, quantity, target_profit):
+def run_arbitrage(spot_symbol, future_symbol, threshold, quantity, target_profit, interval):
 
     while True:
 
@@ -110,7 +110,7 @@ def run_arbitrage(spot_symbol, future_symbol, threshold, quantity, target_profit
 
                 break
 
-        time.sleep(5)  # Tunggu 5 detik sebelum melakukan pengecekan lagi
+        time.sleep(interval)  # Tunggu interval detik sebelum melakukan pengecekan lagi
 
 # Meminta input dari pengguna untuk API Key dan Secret Key
 
@@ -124,7 +124,7 @@ exchange.apiKey = api_key
 
 exchange.secret = api_secret
 
-# Meminta input dari pengguna untuk simbol aset, threshold, kuantitas, dan target keuntungan
+# Meminta input dari pengguna untuk simbol aset, threshold, kuantitas, target keuntungan, dan interval
 
 spot_symbol = input("Masukkan simbol aset pasar spot (misalnya BTC/USDT): ")
 
@@ -136,7 +136,9 @@ quantity = float(input("Masukkan kuantitas yang akan dieksekusi: "))
 
 target_profit = float(input("Masukkan target keuntungan (%): "))
 
+interval = int(input("Masukkan interval screening (detik): "))
+
 # Menjalankan strategi arbitrase
 
-run_arbitrage(spot_symbol, future_symbol, threshold, quantity, target_profit)
+run_arbitrage(spot_symbol, future_symbol, threshold, quantity, target_profit, interval)
 
