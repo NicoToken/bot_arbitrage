@@ -1,7 +1,5 @@
 import requests
 
-import json
-
 import time
 
 from binance.client import Client
@@ -98,10 +96,6 @@ def cal_triangular_arb_surface_rate(t_pair, prices_dict):
 
         swap_1_rate = 0
 
-        swap_2_rate = 0
-
-        swap_3_rate = 0
-
         if direction == "forward":
 
             swap_1_rate = 1 / a_ask
@@ -146,7 +140,7 @@ def cal_triangular_arb_surface_rate(t_pair, prices_dict):
 
                 if profit_loss_perc > min_surface_rate:
 
-                    surface_dict = {
+                                        surface_dict = {
 
                         "pair_a": pair_a,
 
@@ -188,14 +182,6 @@ def find_arbitrage_opportunities(triangular_pairs_list):
 
 def execute_arbitrage(trade_opportunity):
 
-    # Implement your arbitrage execution logic here
-
-    # This function will execute the arbitrage trade based on the given trade_opportunity dictionary
-
-    # Make sure to handle errors and exceptions during the trade execution process
-
-    # Example implementation:
-
     pair_a = trade_opportunity['pair_a']
 
     pair_b = trade_opportunity['pair_b']
@@ -221,8 +207,6 @@ def execute_arbitrage(trade_opportunity):
     print(f"Profit/Loss Percentage: {trade_opportunity['profit_loss_percentage']}")
 
     # Add your arbitrage execution logic here
-
-# Main function
 
 def main():
 
@@ -253,4 +237,3 @@ def main():
 if __name__ == "__main__":
 
     main()
-
