@@ -140,4 +140,3 @@ target_profit = float(input("Masukkan target keuntungan (%): "))
 
 run_arbitrage(spot_symbol, future_symbol, threshold, quantity, target_profit)
 
-
