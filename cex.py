@@ -46,10 +46,6 @@ bybit = ccxt.bybit({
 
 })
 
-# Bursa utama untuk deposit pertama
-
-main_exchange = tokocrypto
-
 # Jumlah dana yang akan digunakan untuk arbitrase (misalnya 1000 USDT)
 
 funds = 1000
@@ -92,17 +88,21 @@ def execute_arbitrage(pair, min_price, max_price):
 
     # Eksekusi tindakan arbitrase
 
-    # Contoh: Beli di Bursa Utama, Jual di Binance
+    # Contoh: Beli di Binance, Jual di Bursa Lainnya
 
-    main_exchange.create_limit_buy_order(pair, amount, min_price)
+    binance.create_limit_buy_order(pair, amount, min_price)
 
-    binance.create_limit_sell_order(pair, amount, max_price)
+    indodax.create_limit_sell_order(pair, amount, max_price)
+
+    kucoin.create_limit_sell_order(pair, amount, max_price)
+
+    bybit.create_limit_sell_order(pair, amount, max_price)
 
     # Catat atau lakukan tindakan lain yang diperlukan
 
 # Dapatkan semua pair yang tersedia di semua bursa
 
-common_pairs = get_common_pairs([main_exchange, binance, indodax, kucoin, bybit])
+common_pairs = get_common_pairs([binance, indodax, kucoin, bybit])
 
 # Loop infinit untuk memeriksa peluang arbitrase
 
@@ -114,8 +114,6 @@ while True:
 
             # Dapatkan harga dari semua bursa
 
-            main_price = get_price(main_exchange, pair)
-
             binance_price = get_price(binance, pair)
 
             indodax_price = get_price(indodax, pair)
@@ -126,9 +124,9 @@ while True:
 
             # Hitung persentase arbitrase
 
-            if main_price and binance_price and indodax_price and kucoin_price and bybit_price:
+            if binance_price and indodax_price and kucoin_price and bybit_price:
 
-                min_price = min(binance_price, indodax_price, kucoin_price, bybit_price)
+                min_price = min(indodax_price, kucoin_price, bybit_price)
 
                 max_price = max(binance_price, indodax_price, kucoin_price, bybit_price)
 
