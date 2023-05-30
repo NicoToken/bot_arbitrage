@@ -84,23 +84,9 @@ while True:
 
                 colored_text = colored(f"{pair}: {percentage_arbitrage:.2f}%", "green")
 
-            # Tampilkan informasi penjual dan pembeli (CEX)
-
-            cex_info = ""
-
-            if binance_price and indodax_price:
-
-                if binance_price > indodax_price:
-
-                    cex_info = colored("Binance beli - jual Indodax", "green")
-
-                else:
-
-                    cex_info = colored("Indodax beli - jual Binance", "red")
-
             # Tampilkan hasil screning di terminal
 
-            print(f"{colored_text}  {cex_info}")
+            print(colored_text)
 
         except Exception as e:
 
