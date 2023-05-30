@@ -4,25 +4,27 @@ import time
 
 from termcolor import colored
 
-# Inisialisasi objek Binance dan Indodax
+# Inisialisasi objek Binance, Indodax, Tokocrypto, KuCoin, dan Bybit
 
 binance = ccxt.binance()
 
 indodax = ccxt.indodax()
 
-# Fungsi untuk mendapatkan pair yang tersedia di kedua bursa
+tokocrypto = ccxt.tokocrypto()
 
-def get_common_pairs(exchange1, exchange2):
+kucoin = ccxt.kucoin()
 
-    pairs1 = exchange1.fetch_markets()
+bybit = ccxt.bybit()
 
-    pairs2 = exchange2.fetch_markets()
+# Fungsi untuk mendapatkan pair yang tersedia di semua bursa
 
-    symbols1 = set(pair['symbol'] for pair in pairs1)
+def get_common_pairs(exchanges):
 
-    symbols2 = set(pair['symbol'] for pair in pairs2)
+    pairs = [exchange.fetch_markets() for exchange in exchanges]
 
-    common_symbols = symbols1.intersection(symbols2)
+    symbols = [set(pair['symbol'] for pair in exchange) for exchange in pairs]
+
+    common_symbols = set.intersection(*symbols)
 
     return list(common_symbols)
 
@@ -34,9 +36,9 @@ def get_price(exchange, symbol):
 
     return ticker['ask'] if ticker['ask'] else None
 
-# Dapatkan semua pair yang tersedia di Indodax dan Binance
+# Dapatkan semua pair yang tersedia di semua bursa
 
-common_pairs = get_common_pairs(indodax, binance)
+common_pairs = get_common_pairs([binance, indodax, tokocrypto, kucoin, bybit])
 
 # Loop infinit untuk memeriksa peluang arbitrase
 
@@ -46,17 +48,27 @@ while True:
 
         try:
 
-            # Dapatkan harga dari Binance dan Indodax
+            # Dapatkan harga dari semua bursa
 
             binance_price = get_price(binance, pair)
 
             indodax_price = get_price(indodax, pair)
 
+            tokocrypto_price = get_price(tokocrypto, pair)
+
+            kucoin_price = get_price(kucoin, pair)
+
+            bybit_price = get_price(bybit, pair)
+
             # Hitung persentase arbitrase
 
-            if binance_price and indodax_price:
+            if binance_price and indodax_price and tokocrypto_price and kucoin_price and bybit_price:
 
-                percentage_arbitrage = ((binance_price - indodax_price) / indodax_price) * 100
+                min_price = min(indodax_price, tokocrypto_price, kucoin_price, bybit_price)
+
+                max_price = max(binance_price, indodax_price, tokocrypto_price, kucoin_price, bybit_price)
+
+                percentage_arbitrage = ((max_price - min_price) / min_price) * 100
 
             else:
 
