@@ -10,6 +10,22 @@ binance = ccxt.binance()
 
 indodax = ccxt.indodax()
 
+# Fungsi untuk mendapatkan pair yang tersedia di kedua bursa
+
+def get_common_pairs(exchange1, exchange2):
+
+    pairs1 = exchange1.fetch_markets()
+
+    pairs2 = exchange2.fetch_markets()
+
+    symbols1 = set(pair['symbol'] for pair in pairs1)
+
+    symbols2 = set(pair['symbol'] for pair in pairs2)
+
+    common_symbols = symbols1.intersection(symbols2)
+
+    return list(common_symbols)
+
 # Fungsi untuk mendapatkan harga
 
 def get_price(exchange, symbol):
@@ -18,19 +34,15 @@ def get_price(exchange, symbol):
 
     return ticker['ask'] if ticker['ask'] else None
 
-# Dapatkan semua pasangan yang tersedia di Binance
+# Dapatkan semua pair yang tersedia di Indodax dan Binance
 
-binance_pairs = binance.fetch_markets()
-
-# Simpan pasangan dengan base coin USDT
-
-usdt_pairs = [pair['symbol'] for pair in binance_pairs if pair['quote'] == 'USDT']
+common_pairs = get_common_pairs(indodax, binance)
 
 # Loop infinit untuk memeriksa peluang arbitrase
 
 while True:
 
-    for pair in usdt_pairs:
+    for pair in common_pairs:
 
         try:
 
