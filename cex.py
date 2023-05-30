@@ -6,15 +6,45 @@ from termcolor import colored
 
 # Inisialisasi objek Binance, Indodax, Tokocrypto, KuCoin, dan Bybit
 
-binance = ccxt.binance()
+binance = ccxt.binance({
 
-indodax = ccxt.indodax()
+    'apiKey': 'BINANCE_API_KEY',
 
-tokocrypto = ccxt.tokocrypto()
+    'secret': 'BINANCE_SECRET_KEY'
 
-kucoin = ccxt.kucoin()
+})
 
-bybit = ccxt.bybit()
+indodax = ccxt.indodax({
+
+    'apiKey': 'INDODAX_API_KEY',
+
+    'secret': 'INDODAX_SECRET_KEY'
+
+})
+
+tokocrypto = ccxt.tokocrypto({
+
+    'apiKey': 'TOKOCRYPTO_API_KEY',
+
+    'secret': 'TOKOCRYPTO_SECRET_KEY'
+
+})
+
+kucoin = ccxt.kucoin({
+
+    'apiKey': 'KUCOIN_API_KEY',
+
+    'secret': 'KUCOIN_SECRET_KEY'
+
+})
+
+bybit = ccxt.bybit({
+
+    'apiKey': 'BYBIT_API_KEY',
+
+    'secret': 'BYBIT_SECRET_KEY'
+
+})
 
 # Jumlah dana yang akan digunakan untuk arbitrase (misalnya 1000 USDT)
 
@@ -94,13 +124,20 @@ while True:
 
                 max_price = max(binance_price, indodax_price, tokocrypto_price, kucoin_price, bybit_price)
 
-                percentage_arbitrage = ((max_price - min_price) / min_price) * 100
+                # Hitung persentase arbitrase
+                             if min_price != 0:
+
+                    percentage_arbitrage = ((max_price - min_price) / min_price) * 100
+
+                else:
+
+                    percentage_arbitrage = 0.0
 
             else:
 
                 percentage_arbitrage = 0.0
 
-                        # Tentukan warna teks berdasarkan persentase arbitrase
+            # Tentukan warna teks berdasarkan persentase arbitrase
 
             if percentage_arbitrage < 0:
 
@@ -133,3 +170,5 @@ while True:
     # Waktu tunggu antara setiap iterasi
 
     time.sleep(5)  # Interval screening 5 detik
+               
+
