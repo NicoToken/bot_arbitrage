@@ -4,8 +4,6 @@ import time
 
 from termcolor import colored
 
-import requests
-
 # Inisialisasi objek Binance, Indodax, Tokocrypto, KuCoin, dan Bybit
 
 binance = ccxt.binance()
@@ -94,12 +92,15 @@ while True:
 
                 min_price = min(indodax_price, tokocrypto_price, kucoin_price, bybit_price)
 
-                max_price = max(binance_price, indodax_price, tokocrypto_price, kucoin, bybit_price)
-                         # Hitung persentase arbitrase
+                max_price = max(binance_price, indodax_price, tokocrypto_price, kucoin_price, bybit_price)
 
-            percentage_arbitrage = ((max_price - min_price) / min_price) * 100
+                percentage_arbitrage = ((max_price - min_price) / min_price) * 100
 
-            # Tentukan warna teks berdasarkan persentase arbitrase
+            else:
+
+                percentage_arbitrage = 0.0
+
+                        # Tentukan warna teks berdasarkan persentase arbitrase
 
             if percentage_arbitrage < 0:
 
@@ -129,6 +130,6 @@ while True:
 
             print(f"Terjadi kesalahan: {e}")
 
-# Waktu tunggu antara setiap iterasi
+    # Waktu tunggu antara setiap iterasi
 
-time.sleep(5)  # Interval screning 5 detik
+    time.sleep(5)  # Interval screening 5 detik
