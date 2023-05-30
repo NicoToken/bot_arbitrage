@@ -20,7 +20,7 @@ def get_price(exchange, symbol):
 
 # Simpan semua pasangan yang ingin Anda arbitrase
 
-pairs = ['BTC/IDR', 'ETH/IDR', 'BTC/USDT', 'ETH/USDT']
+pairs = ['BTC/USDT', 'ETH/USDT', 'BTC/USDT', 'ETH/USDT']
 
 # Loop infinit untuk memeriksa peluang arbitrase
 
