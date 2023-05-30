@@ -130,7 +130,7 @@ while True:
 
                 min_price = min(binance_price, indodax_price, kucoin_price, bybit_price)
 
-                                max_price = max(binance_price, indodax_price, kucoin_price, bybit_price)
+                max_price = max(binance_price, indodax_price, kucoin_price, bybit_price)
 
                 # Hitung persentase arbitrase
 
