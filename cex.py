@@ -4,13 +4,21 @@ import time
 
 from termcolor import colored
 
-# Inisialisasi objek Binance, Indodax, Tokocrypto, KuCoin, dan Bybit
+# Inisialisasi objek Binance, Indodax, KuCoin, dan Bybit
 
 binance = ccxt.binance({
 
     'apiKey': 'BINANCE_API_KEY',
 
-    'secret': 'BINANCE_SECRET_KEY'
+    'secret': 'BINANCE_SECRET_KEY',
+
+    'options': {
+
+        'defaultType': 'spot',  # Akun spot untuk Binance
+
+        'createMarketBuyOrderRequiresPrice': False
+
+    }
 
 })
 
@@ -19,14 +27,6 @@ indodax = ccxt.indodax({
     'apiKey': 'INDODAX_API_KEY',
 
     'secret': 'INDODAX_SECRET_KEY'
-
-})
-
-tokocrypto = ccxt.tokocrypto({
-
-    'apiKey': 'TOKOCRYPTO_API_KEY',
-
-    'secret': 'TOKOCRYPTO_SECRET_KEY'
 
 })
 
@@ -46,6 +46,10 @@ bybit = ccxt.bybit({
 
 })
 
+# Bursa utama untuk deposit pertama
+
+main_exchange = tokocrypto
+
 # Jumlah dana yang akan digunakan untuk arbitrase (misalnya 1000 USDT)
 
 funds = 1000
@@ -53,6 +57,10 @@ funds = 1000
 # Threshold persentase arbitrase untuk melakukan eksekusi (misalnya 2%)
 
 threshold = 2
+
+# Pilih akun demo atau akun real
+
+account_type = input("Pilih akun demo atau akun real (demo/real): ")
 
 # Fungsi untuk mendapatkan pair yang tersedia di semua bursa
 
@@ -84,9 +92,9 @@ def execute_arbitrage(pair, min_price, max_price):
 
     # Eksekusi tindakan arbitrase
 
-    # Contoh: Beli di Indodax, Jual di Binance
+    # Contoh: Beli di Bursa Utama, Jual di Binance
 
-    indodax.create_limit_buy_order(pair, amount, min_price)
+    main_exchange.create_limit_buy_order(pair, amount, min_price)
 
     binance.create_limit_sell_order(pair, amount, max_price)
 
@@ -94,7 +102,7 @@ def execute_arbitrage(pair, min_price, max_price):
 
 # Dapatkan semua pair yang tersedia di semua bursa
 
-common_pairs = get_common_pairs([binance, indodax, tokocrypto, kucoin, bybit])
+common_pairs = get_common_pairs([main_exchange, binance, indodax, kucoin, bybit])
 
 # Loop infinit untuk memeriksa peluang arbitrase
 
@@ -106,11 +114,11 @@ while True:
 
             # Dapatkan harga dari semua bursa
 
+            main_price = get_price(main_exchange, pair)
+
             binance_price = get_price(binance, pair)
 
             indodax_price = get_price(indodax, pair)
-
-            tokocrypto_price = get_price(tokocrypto, pair)
 
             kucoin_price = get_price(kucoin, pair)
 
@@ -118,13 +126,14 @@ while True:
 
             # Hitung persentase arbitrase
 
-            if binance_price and indodax_price and tokocrypto_price and kucoin_price and bybit_price:
+            if main_price and binance_price and indodax_price and kucoin_price and bybit_price:
 
-                min_price = min(indodax_price, tokocrypto_price, kucoin_price, bybit_price)
+                min_price = min(binance_price, indodax_price, kucoin_price, bybit_price)
 
-                max_price = max(binance_price, indodax_price, tokocrypto_price, kucoin_price, bybit_price)
+                                max_price = max(binance_price, indodax_price, kucoin_price, bybit_price)
 
                 # Hitung persentase arbitrase
+
                 if min_price != 0:
 
                     percentage_arbitrage = ((max_price - min_price) / min_price) * 100
@@ -170,7 +179,4 @@ while True:
     # Waktu tunggu antara setiap iterasi
 
     time.sleep(5)  # Interval screening 5 detik
-
-
-               
 
