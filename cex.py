@@ -18,15 +18,19 @@ def get_price(exchange, symbol):
 
     return ticker['ask'] if ticker['ask'] else None
 
-# Simpan semua pasangan yang ingin Anda arbitrase
+# Dapatkan semua pasangan yang tersedia di Binance
 
-pairs = ['BTC/USDT', 'ETH/USDT', 'BTC/USDT', 'ETH/USDT']
+binance_pairs = binance.fetch_markets()
+
+# Simpan pasangan dengan base coin USDT
+
+usdt_pairs = [pair['symbol'] for pair in binance_pairs if pair['quote'] == 'USDT']
 
 # Loop infinit untuk memeriksa peluang arbitrase
 
 while True:
 
-    for pair in pairs:
+    for pair in usdt_pairs:
 
         try:
 
