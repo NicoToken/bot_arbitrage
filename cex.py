@@ -36,29 +36,29 @@ while True:
 
             indodax_price = get_price(indodax, pair)
 
+            # Hitung persentase arbitrase
+
             if binance_price and indodax_price:
 
-                # Cek apakah ada peluang arbitrase
+                percentage_arbitrage = ((binance_price - indodax_price) / indodax_price) * 100
 
-                if binance_price > indodax_price:
+            else:
 
-                    # Hitung persentase arbitrase
+                percentage_arbitrage = 0.0
 
-                    percentage_arbitrage = ((binance_price - indodax_price) / indodax_price) * 100
+            # Tentukan warna teks berdasarkan persentase arbitrase
 
-                    # Tentukan warna teks berdasarkan persentase arbitrase
+            if percentage_arbitrage < 0:
 
-                    if percentage_arbitrage < 0:
+                colored_text = colored(f"{pair}: {percentage_arbitrage:.2f}%", "red")
 
-                        colored_text = colored(f"{pair}: {percentage_arbitrage:.2f}%", "red")
+            else:
 
-                    else:
+                colored_text = colored(f"{pair}: {percentage_arbitrage:.2f}%", "green")
 
-                        colored_text = colored(f"{pair}: {percentage_arbitrage:.2f}%", "green")
+            # Tampilkan hasil screning di terminal
 
-                    # Tampilkan hasil screning di terminal
-
-                    print(colored_text)
+            print(colored_text)
 
         except Exception as e:
 
