@@ -2,6 +2,8 @@ import time
 
 from termcolor import colored
 
+import ccxt
+
 # Inisialisasi objek Binance dan Indodax
 
 binance = ccxt.binance()
@@ -80,5 +82,5 @@ while True:
 
     # Waktu tunggu antara setiap iterasi
 
-    time.sleep(5)  # Interval screning 5 detik
+    time.sleep(1)  # Interval screning 5 detik
 
