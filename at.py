@@ -8,17 +8,17 @@ from terra_sdk.client.lcd import LCDClient
 
 from terra_sdk.key.mnemonic import MnemonicKey
 
-LCD_URL = "<lcd_url>"
+LCD_URL = "https://phoenix-lcd.terra.dev"
 
-MNEMONIC = "<your_mnemonic>"
+MNEMONIC = "rapid maple cage easily kangaroo now slogan toss trouble paper yard culture able earth aware biology fever truly theory dragon antique deal better desk"
 
-ASTROPORT_ROUTER_ADDRESS = "<astroport_router_address>"
+ASTROPORT_ROUTER_ADDRESS = "terra1j8hayvehh3yy02c2vtw5fdhz9f4drhtee8p5n5rguvg3nyd6m83qd2y90a"
 
-TERRASWAP_ROUTER_ADDRESS = "<terraswap_router_address>"
+TERRASWAP_ROUTER_ADDRESS = "terra13ehuhysn5mqjeaheeuew2gjs785f6k7jm8vfsqg3jhtpkwppcmzqcu7chk"
 
 # Inisialisasi Terra Station LCD Client dan kontrak Astroport dan Terraswap
 
-lcd = LCDClient(chain_id="columbus-5", url=LCD_URL)
+lcd = LCDClient(chain_id="phoenix-1", url=LCD_URL)
 
 mnemonic_key = MnemonicKey(mnemonic=MNEMONIC)
 
