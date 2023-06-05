@@ -36,7 +36,7 @@ def get_balance(asset, address):
 
 def get_price_on_astroport(token):
 
-    result = lcd.wasm.contract_query(ASTROPORT_ROUTER_ADDRESS, {"simulation": {"offer_asset": {"amount": "1000000", "info": token}, "to": ["uluna"]}})
+    result = lcd.wasm.contract_query(ASTROPORT_ROUTER_ADDRESS, {"simulation": {"offer_asset": {"amount": "1000000", "info": token}, "to": "uluna"}})
 
     return result["return_amount"]
 
@@ -44,7 +44,7 @@ def get_price_on_astroport(token):
 
 def get_price_on_terraswap(token):
 
-    result = lcd.wasm.contract_query(TERRASWAP_ROUTER_ADDRESS, {"simulation": {"offer_asset": {"amount": "1000000", "info": token}, "to": ["uluna"]}})
+    result = lcd.wasm.contract_query(TERRASWAP_ROUTER_ADDRESS, {"simulation": {"offer_asset": {"amount": "1000000", "info": token}, "to": "uluna"}})
 
     return result["return_amount"]
 
@@ -84,14 +84,15 @@ def run_arbitrage_bot():
 
         time.sleep(5)
 
-# Mendapatkan daftar pasangan token yang tersedia di suatu router
+# Mendapatkan daftar pasangan token yang tersedia di suatu router Astroport
 
 def get_token_pairs(router_address):
 
-    result = lcd.wasm.contract_query(router_address, {"pairs": {}})
+    result = lcd.wasm.contract_query(router_address, {"config": {}})
 
-    pairs = result["pairs"]
+    pairs = result["config"]["pairs"]
 
     return pairs
 
 run_arbitrage_bot()
+
