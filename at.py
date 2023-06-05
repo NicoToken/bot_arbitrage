@@ -16,17 +16,13 @@ ASTROPORT_ROUTER_ADDRESS = "terra1j8hayvehh3yy02c2vtw5fdhz9f4drhtee8p5n5rguvg3ny
 
 TERRASWAP_ROUTER_ADDRESS = "terra13ehuhysn5mqjeaheeuew2gjs785f6k7jm8vfsqg3jhtpkwppcmzqcu7chk"
 
-# Inisialisasi Terra Station LCD Client dan kontrak Astroport dan Terraswap
+# Inisialisasi Terra Station LCD Client
 
 lcd = LCDClient(chain_id="phoenix-1", url=LCD_URL)
 
 mnemonic_key = MnemonicKey(mnemonic=MNEMONIC)
 
 wallet = lcd.wallet(mnemonic_key)
-
-astroport_router = lcd.wasm.contract(ASTROPORT_ROUTER_ADDRESS)
-
-terraswap_router = lcd.wasm.contract(TERRASWAP_ROUTER_ADDRESS)
 
 # Mendapatkan saldo akun
 
@@ -40,11 +36,7 @@ def get_balance(asset, address):
 
 def get_price_on_astroport(token):
 
-    result = astroport_router.query(
-
-        {"simulation": {"offer_asset": {"amount": "1000000", "info": token}, "to": ["uusd"]}}
-
-    )
+    result = lcd.wasm.contract_query(ASTROPORT_ROUTER_ADDRESS, {"simulation": {"offer_asset": {"amount": "1000000", "info": token}, "to": ["uluna"]}})
 
     return result["return_amount"]
 
@@ -52,11 +44,7 @@ def get_price_on_astroport(token):
 
 def get_price_on_terraswap(token):
 
-    result = terraswap_router.query(
-
-        {"simulation": {"offer_asset": {"amount": "1000000", "info": token}, "to": ["uusd"]}}
-
-    )
+    result = lcd.wasm.contract_query(TERRASWAP_ROUTER_ADDRESS, {"simulation": {"offer_asset": {"amount": "1000000", "info": token}, "to": ["uluna"]}})
 
     return result["return_amount"]
 
@@ -107,4 +95,3 @@ def get_token_pairs(router_address):
     return pairs
 
 run_arbitrage_bot()
-
